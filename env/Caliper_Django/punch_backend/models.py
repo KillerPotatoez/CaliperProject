@@ -95,7 +95,7 @@ class ClockEvent(models.Model):
 			print ("Error! is_in is True. User is already clocked in!")
 			return
 
-		self.department = department
+		self.job = job
 		self.in_time = user.in_time = datetime.now().replace(microsecond=0)
 		self.is_in = user.is_in = True
 
