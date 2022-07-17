@@ -95,9 +95,9 @@ class ClockEvent(models.Model):
 			print ("Error! is_in is True. User is already clocked in!")
 			return
 
-		self.job = job
-		self.in_time = user.in_time = datetime.now().replace(microsecond=0)
-		self.is_in = user.is_in = True
+		self.machine = machine
+		self.in_time = employee.in_time = datetime.now().replace(microsecond=0)
+		self.is_in = employee.is_in = True
 
 		print ("self.in_time is...")
 		print (self.in_time)
@@ -110,22 +110,22 @@ class ClockEvent(models.Model):
 		
 	def clockOut(self, user, department):
 
-		self.user = user
-		self.is_in = user.is_in
-		self.in_time = user.in_time
-		self.out_time = user.out_time
+		self.employee = employee
+		self.is_in = emmployee.is_in
+		self.in_time = employee.in_time
+		self.out_time = employee.out_time
 
 		if self.is_in is False:
-			print "Error! user is clocked out, is_in is False"
+			print "Error! employee is clocked out, is_in is False"
 			return
 
 		if self.in_time > self.out_time:
 			print "Error! in_time is greater than out_time"
 			return False
 
-		self.department = department
-		self.out_time = user.out_time = datetime.now().replace(microsecond=0)
-		self.is_in = user.is_in = False
+		self.machine = machine
+		self.out_time = employee.out_time = datetime.now().replace(microsecond=0)
+		self.is_in = employee.is_in = False
 
 		print "self.out_time is.."
 		print self.out_time
