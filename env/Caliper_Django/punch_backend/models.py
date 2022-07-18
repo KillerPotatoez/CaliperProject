@@ -1,9 +1,9 @@
 from bdb import effective
 from django.db import models
 from django.contrib import admin
-from django.conf.urls import patterns, include, url
+from django.urls import re_path, include
 from django.forms import ModelForm
-from django.shortcuts import render_to_response
+from django.shortcuts import render
 from datetime import *
 
 class TimePunch(models.Model):
@@ -24,12 +24,12 @@ class TimePunch(models.Model):
         null=True
     )
 
-    def __str__(self):
-        return self.name
+    def __unicode__(self):
+        return self.emp_id
 
 
 class Job(models.Model):
-    number = models.IntegerField(max_length=8)
+    job_number = models.IntegerField(max_length=8)
     description = models.CharField(max_length=512)
     start_date = models.DateField(default=datetime.now())
     end_date = models.DateField(blank=True,null=True)
@@ -37,21 +37,21 @@ class Job(models.Model):
     quoted_hours = models.FloatField(blank=True,null=True)
     actual_hours = models.FloatField(blank=True,null=True)
     
-    def __str__(self):
-        return self.name
+    def __unicode__(self):
+        return self.job_number
 
 class Machine(models.Model):
-    number = models.IntegerField(max_length=8)
+    machine_number = models.IntegerField(max_length=20)
     description = models.CharField(max_length=512)
     regular_rate = models.FloatField()
     rush_rate = models.FloatField()
     p_rate = models.FloatField()
 
-    def __str__(self):
-            return self.name
+    def __unicode__(self):
+            return self.machine_number
 
 class Employee(models.Model):
-    number = models.IntegerField(max_length=8)
+    employee_number = models.IntegerField(max_length=8)
     first_name = models.CharField(max_length=512)
     last_name = models.CharField(max_length=512)
     department = models.CharField(max_length=512)
@@ -70,72 +70,79 @@ class Employee(models.Model):
     emergency_phone_number = models.CharField(max_length=512)
     status = models.IntegerField(default=1)
 
-    in_time = models.TimeField()
-    is_in = models.BooleanField(False)
-    out_time = models.TimeField()
+    in_time = models.TimeField(blank=True,null=True)
+    is_in = models.BooleanField(default=False,blank=True,null=True)
+    out_time = models.TimeField(blank=True,null=True)
     active = models.BooleanField(default = True)
 
-    def __str__(self):
-        return str(self.last_name) + ', ' + str(self.first_name) + ' : ' + str(self.number)
+    def __unicode__(self):
+        return str(self.last_name) + ', ' + str(self.first_name) + ' : ' + str(self.employee_number)
 
 class ClockEvent(models.Model):
-	employee = models.ForeignKey(Employee)
-	job = models.ForeignKey(Job)
-	machine = models.ForeignKey(Machine, null=True, blank=True)
+    employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
+    job = models.ForeignKey(Job, on_delete=models.CASCADE)
+    machine = models.ForeignKey(Machine, on_delete=models.CASCADE , null=True, blank=True)
+    
+    def clockIn(self, employee, job):
+        self.employee = employee
+        self.is_in = employee.is_in
+        self.in_time = employee.in_time
+        self.out_time = employee.out_time
+        
+        if self.is_in is True:
+            print ("Error! is_in is True. User is already clocked in!")
+            return
 
-	def clockIn(self, employee, job):
-		self.Employee = employee
-		self.is_in = employee.is_in
-		self.in_time = employee.in_time
-		self.out_time = employee.out_time
+        self.job = job
+        self.in_time = employee.in_time = datetime.now().replace(microsecond=0)
+        self.is_in = employee.is_in = True
+        
+        print ("self.in_time is...")
+        print (self.in_time)
+        
+        print ("self.is_in is ...")
+        print (self.is_in)
+        self.save()
+        return
+	    
+    def clockOut(self, employee, job):
+        
+        self.employee = employee
+        self.is_in = employee.is_in
+        self.in_time = employee.in_time
+        self.out_time = employee.out_time
+        
+        if self.is_in is False:
+            print ("Error! employee is clocked out, is_in is False")
+            return
 
-		self.employee = employee
+        if self.in_time > self.out_time:
+            print ("Error! in_time is greater than out_time")
+            return False
+        
+        self.job = job
+        self.out_time = employee.out_time = datetime.now().replace(microsecond=0)
+        self.is_in = employee.is_in = False
+        
+        print ("self.out_time is..")
+        print (self.out_time)
+        
+        print ("self.is_in is...")
+        print (self.is_in)
 
-		if self.is_in is True:
-			print ("Error! is_in is True. User is already clocked in!")
-			return
+        print ("self.in_time is...")
+        print (self.in_time)
+        #TODO in_time is NONE!!!!
+        
+        self.save()
+        return
 
-		self.machine = machine
-		self.in_time = employee.in_time = datetime.now().replace(microsecond=0)
-		self.is_in = employee.is_in = True
+class Index(models.Model):
+    employee_number = models.IntegerField(max_length=8)
+    job_number = models.CharField(max_length=20)
+    machine_number = models.IntegerField(max_length=20)
 
-		print ("self.in_time is...")
-		print (self.in_time)
-
-		print ("self.is_in is ...")
-		print (self.is_in)
-
-		self.save()
-		return
-		
-	def clockOut(self, user, department):
-
-		self.employee = employee
-		self.is_in = emmployee.is_in
-		self.in_time = employee.in_time
-		self.out_time = employee.out_time
-
-		if self.is_in is False:
-			print "Error! employee is clocked out, is_in is False"
-			return
-
-		if self.in_time > self.out_time:
-			print "Error! in_time is greater than out_time"
-			return False
-
-		self.machine = machine
-		self.out_time = employee.out_time = datetime.now().replace(microsecond=0)
-		self.is_in = employee.is_in = False
-
-		print "self.out_time is.."
-		print self.out_time
-
-		print "self.is_in is..."
-		print self.is_in
-
-		print "self.in_time is..."
-		print self.in_time
-		#TODO in_time is NONE!!!!
-
-		self.save()
-		return
+class IndexForm(ModelForm):
+        class Meta:
+                model = Index
+                fields = ['employee_number', 'job_number', 'machine_number']
