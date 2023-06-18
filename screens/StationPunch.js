@@ -15,10 +15,18 @@ import {
     TouchableOpacity,
 } from 'react-native';
 
+const [number, onChangeNumber] = React.useState('');
+
 export default class StationPunch extends Component { 
-    number = React.useState(null);
-    onChangeNumber = React.useState(null);
+
+    onChangeNumber = (inputValue) => {
+        // Remove non-numeric characters from the input value
+        const cleanedValue = inputValue.replace(/[^0-9]/g, '');
+        this.setState({ number: cleanedValue });
+    };
+
     render(){
+        const { number } = this.state;
         return (
             <SafeAreaView style={styles.container}>
                 <View style={styles.box}>
@@ -27,8 +35,8 @@ export default class StationPunch extends Component {
                             Job #:
                         </Text>
                         <TextInput style={styles.input}
-                            onChangeText={onChangeNumber}
                             value={number}
+                            onChangeText={this.onChangeNumber}
                             keyboardType="numeric"
                         />
                     </View>

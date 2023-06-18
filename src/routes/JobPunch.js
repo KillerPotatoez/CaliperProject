@@ -18,8 +18,16 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 export default function JobPunch({ navigation }) {
-    const number = React.useState(null);
-    const onChangeNumber = React.useState(null);
+    const [jobId, setJobId] = useState('');
+    const onChangeNumber = (inputValue) => {
+        // Remove non-numeric characters from the input value
+        const cleanedValue = inputValue.replace(/[^0-9]/g, '');
+        setJobId(cleanedValue);
+      };
+    
+    const handleNext = () => {
+        navigation.navigate('StationPunch', { jobId });
+      };
 
         return (
             <SafeAreaView style={styles.container}>
@@ -29,8 +37,8 @@ export default function JobPunch({ navigation }) {
                             Job #:
                         </Text>
                         <TextInput style={styles.input}
+                            value={jobId}
                             onChangeText={onChangeNumber}
-                            value={number}
                             keyboardType="numeric"
                         />
                     </View>

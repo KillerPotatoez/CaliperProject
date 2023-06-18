@@ -16,8 +16,13 @@ import {
 } from 'react-native';
 
 export default class JobPunch extends Component { 
-    number = React.useState(null);
-    onChangeNumber = React.useState(null);
+    
+    onChangeNumber = (inputValue) => {
+        // Remove non-numeric characters from the input value
+        const cleanedValue = inputValue.replace(/[^0-9]/g, '');
+        this.setState({ number: cleanedValue });
+    };
+
     render() {
         return (
             <SafeAreaView style={styles.container}>
@@ -27,8 +32,8 @@ export default class JobPunch extends Component {
                             Job #:
                         </Text>
                         <TextInput style={styles.input}
-                            onChangeText={onChangeNumber}
                             value={number}
+                            onChangeText={this.onChangeNumber}
                             keyboardType="numeric"
                         />
                     </View>

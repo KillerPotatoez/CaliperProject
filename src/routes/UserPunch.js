@@ -14,17 +14,26 @@ import {
     fontcolor,
     TouchableOpacity,
 } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import axios from 'axios';
 
 
 export default function UserPunch({ navigation }) {
 
-    const [number, onChangeNumber] = React.useState(null);
+    const [empId, setEmpId] = useState('');
+    const onChangeNumber = (inputValue) => {
+        // Remove non-numeric characters from the input value
+        const cleanedValue = inputValue.replace(/[^0-9]/g, '');
+        setEmpId(cleanedValue);
+      };
+    const [clockedIn, setClockedIn] = useState(false);
+    const [clockSession, setClockSession] = useState(null);
+
     const [date, setDate] = React.useState(null);
     const monthNames = ["January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December"];
     const [time, setTime] = React.useState(null);
+    const [number, setNumber] = useState('');
+    
 
     const getCurrentTime = () => {
         let today = new Date();
@@ -49,7 +58,7 @@ export default function UserPunch({ navigation }) {
         let time = getCurrentTime();
         setTime(time);
         let options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-
+        setClockSession();
         const timer = setInterval(() => {
             setTime(new Date().toLocaleTimeString());
             setDate(new Date().toLocaleDateString('en-US', options).replaceAll(',', ''));
@@ -58,7 +67,23 @@ export default function UserPunch({ navigation }) {
         return () => {
             clearInterval(timer);
         };
-    })
+    });
+
+    const handleClockInOut = async () => {
+        
+          const response = await axios.post('/api/clock_in_out', {
+            emp_id: empId,
+            job_id: 'job_id', // Replace with the actual job ID
+            mach_id: 'mach_id', // Replace with the actual machine ID
+          });
+    
+          const { active } = response.data;
+          setClockedIn(active);
+    
+          if (!clockedIn) {
+            navigation.navigate('JobPunch'); // Navigate to the next screen for entering job ID
+          }
+      };
 
 
     return (
@@ -79,13 +104,13 @@ export default function UserPunch({ navigation }) {
                         User ID:
                     </Text>
                     <TextInput style={styles.input}
-                        onChangeText={onChangeNumber}
-                        value={number}
-                        keyboardType="numeric"
+                            value={empId}
+                            onChangeText={onChangeNumber}
+                            keyboardType="numeric"
                     />
                 </View>
                 <View style={styles.button}>
-                    <Button style={styles.buttons} onPress={() => navigation.navigate('JobPunch')}
+                    <Button style={styles.buttons} onPress={handleClockInOut}
                         title="Clock In/Out"
                     />
                     <Button style={styles.buttons} onPress={() => navigation.navigate('JobPunch')}
@@ -96,7 +121,7 @@ export default function UserPunch({ navigation }) {
         </SafeAreaView>
     );
     
-}
+};
 
 
 const styles = StyleSheet.create({

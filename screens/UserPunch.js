@@ -15,18 +15,22 @@ import {
     TouchableOpacity,
 } from 'react-native';
 
+const [number, onChangeNumber] = React.useState('');
 
 export default class UserPunch extends Component {
-    
-    number = React.useState(null)
-    onChangeNumber = React.useState(null)
-    date = React.useState(null)
+    date = React.useState(null);
     setDate = React.useState(null);
     monthNames = ["January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December"];
     time = React.useState(null);
     setTime = React.useState(null);
-
+    
+    onChangeNumber = (inputValue) => {
+        // Remove non-numeric characters from the input value
+        const cleanedValue = inputValue.replace(/[^0-9]/g, '');
+        this.setState({ number: cleanedValue });
+    };
+    
     getCurrentTime = () => {
         let today = new Date();
         let hours = (today.getHours() < 10 ? '0' : '') + today.getHours();
@@ -62,6 +66,7 @@ export default class UserPunch extends Component {
 
     }
     render() {
+        const { number } = this.state;
         return (
             <SafeAreaView style={styles.container}>
                 <View style={styles.box}>
@@ -80,8 +85,8 @@ export default class UserPunch extends Component {
                             User ID:
                         </Text>
                         <TextInput style={styles.input}
-                            onChangeText={onChangeNumber}
                             value={number}
+                            onChangeText={this.onChangeNumber}
                             keyboardType="numeric"
                         />
                     </View>

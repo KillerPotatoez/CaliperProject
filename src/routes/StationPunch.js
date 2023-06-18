@@ -8,6 +8,7 @@ import {
     TextInput,
     useColorScheme,
     View,
+    number,
     Colors,
     Button,
     Alert,
@@ -18,8 +19,21 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 export default function StationPunch({ navigation }) {
-    const number = React.useState(null);
-    const onChangeNumber = React.useState(null);
+    const [machineId, setMachineId] = useState('');
+    const empId = navigation.getParam('empId');
+    const jobId = navigation.getParam('jobId');
+
+    const handleFinish = async () => {
+          await axios.post('/api/clock_in_out', {
+            emp_id: empId,
+            job_id: jobId,
+            mach_id: machineId,
+          });
+    
+          // Perform any necessary post-clock-in actions
+    
+          navigation.navigate('UserPunch'); // Navigate to the home screen or desired destination
+      };
 
         return (
             <SafeAreaView style={styles.container}>
@@ -29,8 +43,8 @@ export default function StationPunch({ navigation }) {
                             Job #:
                         </Text>
                         <TextInput style={styles.input}
-                            onChangeText={onChangeNumber}
-                            value={number}
+                            value={machineId}
+                            onChangeText={setMachineId}
                             keyboardType="numeric"
                         />
                     </View>
