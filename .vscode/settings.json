@@ -1,0 +1,6 @@
+{
+    "python.analysis.extraPaths": [
+        "./env/Caliper_Django"
+    ],
+    "git.ignoreLimitWarning": true
+}
