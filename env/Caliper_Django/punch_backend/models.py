@@ -78,64 +78,64 @@ class Employee(models.Model):
     def __str__(self):
         return str(self.last_name) + ', ' + str(self.first_name) + ' : ' + str(self.number)
 
-class ClockEvent(models.Model):
-	employee = models.ForeignKey(Employee)
-	job = models.ForeignKey(Job)
-	machine = models.ForeignKey(Machine, null=True, blank=True)
+# class ClockEvent(models.Model):
+# 	employee = models.ForeignKey(Employee)
+# 	job = models.ForeignKey(Job)
+# 	machine = models.ForeignKey(Machine, null=True, blank=True)
 
-	def clockIn(self, employee, job):
-		self.Employee = employee
-		self.is_in = employee.is_in
-		self.in_time = employee.in_time
-		self.out_time = employee.out_time
+# 	def clockIn(self, employee, job):
+# 		self.Employee = employee
+# 		self.is_in = employee.is_in
+# 		self.in_time = employee.in_time
+# 		self.out_time = employee.out_time
 
-		self.employee = employee
+# 		self.employee = employee
 
-		if self.is_in is True:
-			print ("Error! is_in is True. User is already clocked in!")
-			return
+# 		if self.is_in is True:
+# 			print ("Error! is_in is True. User is already clocked in!")
+# 			return
 
-		self.department = department
-		self.in_time = user.in_time = datetime.now().replace(microsecond=0)
-		self.is_in = user.is_in = True
+# 		self.department = department
+# 		self.in_time = user.in_time = datetime.now().replace(microsecond=0)
+# 		self.is_in = user.is_in = True
 
-		print ("self.in_time is...")
-		print (self.in_time)
+# 		print ("self.in_time is...")
+# 		print (self.in_time)
 
-		print ("self.is_in is ...")
-		print (self.is_in)
+# 		print ("self.is_in is ...")
+# 		print (self.is_in)
 
-		self.save()
-		return
+# 		self.save()
+# 		return
 		
-	def clockOut(self, user, department):
+# 	def clockOut(self, user, department):
 
-		self.user = user
-		self.is_in = user.is_in
-		self.in_time = user.in_time
-		self.out_time = user.out_time
+# 		self.user = user
+# 		self.is_in = user.is_in
+# 		self.in_time = user.in_time
+# 		self.out_time = user.out_time
 
-		if self.is_in is False:
-			print "Error! user is clocked out, is_in is False"
-			return
+# 		if self.is_in is False:
+# 			print "Error! user is clocked out, is_in is False"
+# 			return
 
-		if self.in_time > self.out_time:
-			print "Error! in_time is greater than out_time"
-			return False
+# 		if self.in_time > self.out_time:
+# 			print "Error! in_time is greater than out_time"
+# 			return False
 
-		self.department = department
-		self.out_time = user.out_time = datetime.now().replace(microsecond=0)
-		self.is_in = user.is_in = False
+# 		self.department = department
+# 		self.out_time = user.out_time = datetime.now().replace(microsecond=0)
+# 		self.is_in = user.is_in = False
 
-		print "self.out_time is.."
-		print self.out_time
+# 		print "self.out_time is.."
+# 		print self.out_time
 
-		print "self.is_in is..."
-		print self.is_in
+# 		print "self.is_in is..."
+# 		print self.is_in
 
-		print "self.in_time is..."
-		print self.in_time
-		#TODO in_time is NONE!!!!
+# 		print "self.in_time is..."
+# 		print self.in_time
+# 		#TODO in_time is NONE!!!!
 
-		self.save()
-		return
+# 		self.save()
+# 		return
