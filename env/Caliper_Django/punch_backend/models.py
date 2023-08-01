@@ -1,9 +1,9 @@
 from bdb import effective
 from django.db import models
 from django.contrib import admin
-from django.conf.urls import patterns, include, url
+# from django.conf.urls import patterns, include, url
 from django.forms import ModelForm
-from django.shortcuts import render_to_response
+# from django.shortcuts import render_to_response
 from datetime import *
 
 class TimePunch(models.Model):
