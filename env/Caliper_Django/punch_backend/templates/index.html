@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+
+<html>
+<head>
+    <title>Caliper</title>
+</head>
+<body>
+    <h1>Caliper</h1>
+    
+    <form id="clockForm">
+        <label for="empId">Employee ID:</label>
+        <input type="text" id="empId" name="empId"><br><br>
+        
+        <label for="jobId">Job ID:</label>
+        <input type="text" id="jobId" name="jobId"><br><br>
+        
+        <label for="machId">Machine ID:</label>
+        <input type="text" id="machId" name="machId"><br><br>
+        
+        <button type="button" onclick="checkAndPerformClockInOut()">Clock In/Out</button>
+    </form>
+
+    <script>
+        function checkAndPerformClockInOut() {
+            var empId = document.getElementById('empId').value;
+            var jobId = document.getElementById('jobId').value;
+            var machId = document.getElementById('machId').value;
+            
+            // Perform the check and clock in/out logic using AJAX or fetch API
+            // You can handle the button click event and send a POST request to your Django backend
+            
+            // Example using fetch API:
+            fetch('/api/clock_in_out/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    emp_id: empId,
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Handle the response from the backend
+                if (data.active_session) {
+                    // Session already active, perform clock out
+                    fetch('/api/clock_in_out/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            emp_id: empId,
+                        }),
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        // Handle the clock out response
+                        if (data.message === 'Clock out successful') {
+                            // Display clock out message
+                            console.log('Employee has been clocked out');
+                        }
+                    })
+                    .catch(error => {
+                        // Handle any errors
+                        console.log('Error performing clock out:', error);
+                    });
+                } else {
+                    // No active session, move to the next view
+                    window.location.href = `/api/clock_in?emp_id=${empId}&job_id=${jobId}&mach_id=${machId}`;
+                }
+            })
+            .catch(error => {
+                // Handle any errors
+                console.log('Error checking session:', error);
+            });
+        }
+    </script>
+</body>
+</html>
+
+
+
+{% endblock %}
