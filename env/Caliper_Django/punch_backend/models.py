@@ -7,9 +7,9 @@ from django.forms import ModelForm
 from datetime import *
 
 class TimePunch(models.Model):
-    emp_id = models.IntegerField()
-    job_id = models.IntegerField()
-    mach_id = models.IntegerField()
+    emp_id = models.CharField(max_length=25,default="0")
+    job_id = models.CharField(max_length=25,default="0")
+    mach_id = models.CharField(max_length=25,default="0")
     punch_in = models.DateTimeField(
         blank=True,
         null=True
@@ -29,7 +29,7 @@ class TimePunch(models.Model):
 
 
 class Job(models.Model):
-    number = models.IntegerField(max_length=8)
+    job_id = models.CharField(max_length=25,default="0")
     description = models.CharField(max_length=512)
     start_date = models.DateField(default=datetime.now())
     end_date = models.DateField(blank=True,null=True)
@@ -41,7 +41,7 @@ class Job(models.Model):
         return self.name
 
 class Machine(models.Model):
-    number = models.IntegerField(max_length=8)
+    mach_id = models.CharField(max_length=25,default="0")
     description = models.CharField(max_length=512)
     regular_rate = models.FloatField()
     rush_rate = models.FloatField()
@@ -51,18 +51,18 @@ class Machine(models.Model):
             return self.name
 
 class Employee(models.Model):
-    number = models.IntegerField(max_length=8)
+    emp_id = models.CharField(max_length=25,default="0")
     first_name = models.CharField(max_length=512)
     last_name = models.CharField(max_length=512)
     department = models.CharField(max_length=512)
     pay_rate = models.FloatField()
     phone_number = models.CharField(max_length=512)
     alt_phone_number = models.CharField(max_length=512, blank=True,null=True)
-    address_id = models.IntegerField(max_length=8)
-    drivers_license = models.IntegerField(max_length=15)
+    address = models.CharField(max_length=512,null=True, blank=True)
+    drivers_license = models.IntegerField()
     birth_date = models.DateField()
     ssn = models.CharField(max_length=512)
-    coverage_id = models.IntegerField(max_length=8,blank=True,null=True)
+    coverage_id = models.IntegerField(blank=True,null=True)
     gender = models.CharField(max_length=12)
     start_date = models.DateField(default=datetime.now())
     end_date = models.DateField(blank=True,null=True)
@@ -70,9 +70,9 @@ class Employee(models.Model):
     emergency_phone_number = models.CharField(max_length=512)
     status = models.IntegerField(default=1)
 
-    in_time = models.TimeField()
-    is_in = models.BooleanField(False)
-    out_time = models.TimeField()
+    in_time = models.TimeField(null=True, blank=True)
+    is_in = models.BooleanField(null=True, blank=True)
+    out_time = models.TimeField(null=True, blank=True)
     active = models.BooleanField(default = True)
 
     def __str__(self):

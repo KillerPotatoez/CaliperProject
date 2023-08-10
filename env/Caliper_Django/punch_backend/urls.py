@@ -1,9 +1,9 @@
-from django.conf.urls import patterns, include, url
-import django.contrib.auth
+from django.urls import path
+from . import views
 from django.contrib import admin
 
-urlpatterns = patterns('',
-     url(r'^$', 'views.clockin', name='index'),
-     url(r'^clockIn/$', 'views.clockin', name='clockin'),
-     url(r'^clockOut/$', 'views.clockout', name='clockout'),
-)
+urlpatterns = [
+     path('', views.index, name='index'),
+     path('perform_clock_in/', views.perform_clock_in, name='perform_clock_in'),
+     # path('^clockOut/$', views.clockout, name='clockout'),
+]

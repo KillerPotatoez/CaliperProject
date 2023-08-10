@@ -1,62 +1,26 @@
 from django.contrib import admin
-from punchclock.models import *
-from django.conf.urls import patterns, include, url
+from .models import *
 from django.http import *
-from django.template import RequestContext, loader
-from django.core.exceptions import PermissionDenied
-from django.utils.encoding import force_unicode
-from django.contrib.admin import helpers
-from django.template.response import TemplateResponse
 
 
-admin.site.register(Account)
-admin.site.register(Department)
 
-class UserAdmin(admin.ModelAdmin):
-        fields = ['first_name', 'last_name', 'number', 'start_date', 'amount_paid', 'department', 'account', 'active' ]
+@admin.register(Employee)
+class EmployeeAdmin(admin.ModelAdmin):
+    list_display = ('emp_id', 'first_name', 'last_name', 'department')
+    search_fields = ('emp_id', 'first_name', 'last_name', 'department')
 
-        def get_urls(self):
-                urls = super(UserAdmin, self).get_urls()
-                my_urls = patterns('',
-                        #(r'^generate_timecards/$', self.admin_site.admin_view(self.generate_timecards)),
-                        (r'^change_hours/$', self.admin_site.admin_view(self.change_hours))
-                )
-                return my_urls + urls
+@admin.register(Job)
+class JobAdmin(admin.ModelAdmin):
+    list_display = ('job_id', 'description')
+    search_fields = ('job_id', 'description')
 
-        def generate_timecards(self, request, queryset):
-                if request.POST.get('post'):
-                        if perms_needed:
-                                raise PermissionDenied
-                        n = queryset.count()
-                        if n:
-                                for obj in queryset:
-                                        obj_display = force_unicode(obj)
-                else:
-                        context = {
-                                'title' : ("Generate timecards?"),
-                                'queryset' : queryset,
-                                'action_checkbox_name' : helpers.ACTION_CHECKBOX_NAME,
-                        }
-                        return TemplateResponse(request, 'admin/generate_timecards.html',context, current_app=self.admin_site.name)
-#       actions = [generate_timecards]
+@admin.register(Machine)
+class MachineAdmin(admin.ModelAdmin):
+    list_display = ('mach_id', 'description')
+    search_fields = ('mach_id', 'description')
 
-        def change_hours(self, request, queryset):
-                if request.POST.get('post'):
-                        if perms_needed:
-                                raise PermissionDenied
-                        n = queryset.count()
-                        if n:
-                                for obj in queryset:
-                                        obj_display = force_unicode(obj)
-                else:
-                        context = {
-                                'title' : ("Change hours?"),
-                                'queryset' : queryset,
-                                'action_checkbox_name' : helpers.ACTION_CHECKBOX_NAME,
-                        }
-
-                        return TemplateResponse(request, 'admin/change_hours.html',context, current_app=self.admin_site.name)
-
-        actions = [change_hours, generate_timecards]
-
-admin.site.register(User, UserAdmin)
+@admin.register(TimePunch)
+class ClockInOutAdmin(admin.ModelAdmin):
+    list_display = ('emp_id', 'job_id', 'mach_id', 'punch_in', 'punch_out', 'active', 'time')
+    list_filter = ('active',)
+    search_fields = ('emp_id', 'job_id', 'mach_id')

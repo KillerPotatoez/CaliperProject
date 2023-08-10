@@ -3,82 +3,74 @@
 
 {% block content %}
 
+<!DOCTYPE html>
 <html>
 <head>
-    <title>Caliper</title>
+    <title>Time Clock Application</title>
+    
 </head>
 <body>
-    <h1>Caliper</h1>
+    <h1>Time Clock Application</h1>
     
-    <form id="clockForm">
-        <label for="empId">Employee ID:</label>
-        <input type="text" id="empId" name="empId"><br><br>
-        
-        <label for="jobId">Job ID:</label>
-        <input type="text" id="jobId" name="jobId"><br><br>
-        
-        <label for="machId">Machine ID:</label>
-        <input type="text" id="machId" name="machId"><br><br>
-        
-        <button type="button" onclick="checkAndPerformClockInOut()">Clock In/Out</button>
+    <form id="PunchIN" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Clock In</button>
     </form>
 
-    <script>
-        function checkAndPerformClockInOut() {
-            var empId = document.getElementById('empId').value;
-            var jobId = document.getElementById('jobId').value;
-            var machId = document.getElementById('machId').value;
-            
-            // Perform the check and clock in/out logic using AJAX or fetch API
+    {% comment %} <script>
+        // Function to get CSRF token from the cookie
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        const csrf_token = getCookie('csrftoken');
+
+        // Function to perform clock in action
+        function performClockIn() {
+            var emp_Id = document.getElementById('emp_Id').value;
+            var job_Id = document.getElementById('job_Id').value;
+            var mach_Id = document.getElementById('mach_Id').value;
+            var csrf_token = getCookie('csrftoken');
+            var headers = new Headers();
+            headers.append('X-CSRFToken', csrf_token);
+            headers.append('Content-Type', 'application/json');
+            // Perform the clock in action using AJAX or fetch API
             // You can handle the button click event and send a POST request to your Django backend
             
             // Example using fetch API:
-            fetch('/api/clock_in_out/', {
+            fetch('perform_clock_in/', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: headers,
                 body: JSON.stringify({
-                    emp_id: empId,
+                    emp_id: emp_Id,
+                    job_id: job_Id,
+                    mach_id: mach_Id,
                 }),
+                credentials: 'same-origin',
             })
-            .then(response => response.json())
+            .then(response => response.json())       
             .then(data => {
                 // Handle the response from the backend
-                if (data.active_session) {
-                    // Session already active, perform clock out
-                    fetch('/api/clock_in_out/', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            emp_id: empId,
-                        }),
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        // Handle the clock out response
-                        if (data.message === 'Clock out successful') {
-                            // Display clock out message
-                            console.log('Employee has been clocked out');
-                        }
-                    })
-                    .catch(error => {
-                        // Handle any errors
-                        console.log('Error performing clock out:', error);
-                    });
-                } else {
-                    // No active session, move to the next view
-                    window.location.href = `/api/clock_in?emp_id=${empId}&job_id=${jobId}&mach_id=${machId}`;
-                }
+                console.log(data);
             })
             .catch(error => {
                 // Handle any errors
-                console.log('Error checking session:', error);
+                console.log('Error:', error);
             });
-        }
-    </script>
+        }        
+    </script> {% endcomment %}
 </body>
 </html>
 
