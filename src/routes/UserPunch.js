@@ -14,13 +14,44 @@ import {
     fontcolor,
     TouchableOpacity,
 } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import React, { useState } from 'react';
+import { View, TextInput, Button, Alert } from 'react-native';
+import axios from 'axios';
 
+const API_URL = 'http://127.0.0.1:8000/api/';
 
 export default function UserPunch({ navigation }) {
+  const [empId, setEmpId] = useState('');
 
-    const [number, onChangeNumber] = React.useState(null);
+  const handleClockIn = async () => {
+    if (empId !== '') {
+      try {
+        const response = await axios.post(`${API_URL}perform_clock_in/`, {
+          emp_id: empId,
+        });
+
+        if (response.data.new_session) {
+          navigation.navigate('JobPunch', { empId });
+        } else {
+          // If already clocked in, perform clock out
+          const clockOutResponse = await axios.post(`${API_URL}perform_clock_out/`, {
+            emp_id: empId,
+          });
+
+          if (clockOutResponse.data.message === 'Clock out successful') {
+            Alert.alert('Clock Out', 'You have been clocked out');
+          }
+        }
+      } catch (error) {
+        // Handle error if necessary
+        console.log('Error performing clock in:', error);
+      }
+    }
+  };
+
+
+
+  
     const [date, setDate] = React.useState(null);
     const monthNames = ["January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December"];
@@ -79,13 +110,13 @@ export default function UserPunch({ navigation }) {
                         User ID:
                     </Text>
                     <TextInput style={styles.input}
-                        onChangeText={onChangeNumber}
-                        value={number}
+                        value={empId}
+                        onChangeText={setEmpId}
                         keyboardType="numeric"
                     />
                 </View>
                 <View style={styles.button}>
-                    <Button style={styles.buttons} onPress={() => navigation.navigate('JobPunch')}
+                    <Button style={styles.buttons} onPress={handleClockIn}
                         title="Clock In/Out"
                     />
                     <Button style={styles.buttons} onPress={() => navigation.navigate('JobPunch')}
@@ -98,6 +129,7 @@ export default function UserPunch({ navigation }) {
     
 }
 
+export { EnterEmpIdScreen };
 
 const styles = StyleSheet.create({
     container: {

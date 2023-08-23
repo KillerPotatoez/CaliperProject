@@ -13,6 +13,7 @@
   "dependencies": {
     "@react-native-community/masked-view": "^0.1.11",
     "@react-navigation/stack": "^6.2.1",
+    "axios": "^1.4.0",
     "react": "17.0.2",
     "react-native": "0.68.0",
     "react-native-gesture-handler": "^2.4.2",

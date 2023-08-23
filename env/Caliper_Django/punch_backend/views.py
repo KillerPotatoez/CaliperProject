@@ -2,8 +2,6 @@ from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
 from django.utils import timezone
 from .models import TimePunch
-from django.views.decorators.csrf import csrf_protect
-from django.utils.decorators import method_decorator
 from .forms import *
 
 def index(request):
